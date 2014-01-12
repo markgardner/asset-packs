@@ -1,0 +1,13 @@
+{
+	"framework": "angular",
+	"js": [
+		"app.js"
+	],
+	"template": [
+		"views/test.html"
+	],
+	"css": [
+		"css/base.css",
+		"css/print.css"
+	]
+}

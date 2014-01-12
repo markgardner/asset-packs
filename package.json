@@ -1,0 +1,43 @@
+{
+  "name": "asset-packs",
+  "description": "Grunt Plugin/Middleware for packing development source into production assets",
+  "version": "0.0.1",
+  "homepage": "https://github.com/markgardner/asset-packs",
+  "author": {
+    "name": "Mark Gardner",
+    "email": "mark@outer-limit.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markgardner/asset-packs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/markgardner/asset-packs/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/markgardner/asset-packs/blob/master/LICENSE"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-clean": "~0.4.0",
+    "should": "~2.1.1",
+    "grunt": "~0.4.2",
+    "grunt-mocha-test": "~0.8.1",
+    "sinon": "~1.7.3"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.2"
+  },
+  "keywords": [
+    "gruntplugin"
+  ]
+}
