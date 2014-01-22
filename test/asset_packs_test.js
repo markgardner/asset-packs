@@ -62,5 +62,5 @@ describe('asset_packs_test', function() {
 
 			done();
 		}
-	})
+	});
 });

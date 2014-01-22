@@ -5,7 +5,8 @@ module.exports = function(grunt) {
     jshint: {
       all: [
         'Gruntfile.js',
-        'tasks/*.js',
+        'lib/**/*.js',
+        'tasks/*.js'
       ],
       options: {
         curly: true,
@@ -23,7 +24,7 @@ module.exports = function(grunt) {
     },
 
     clean: {
-      asset_packs: ['tmp']
+      asset_packs: ['.build']
     },
 
     // Configuration to be run (and then tested).
@@ -39,10 +40,14 @@ module.exports = function(grunt) {
     // Unit tests.
     mochaTest: {
       test: {
-        options: {
-          reporter: 'spec'
-        },
         src: ['test/*_test.js']
+      }
+    },
+
+    watch: {
+      tests: {
+        files: ['test/*_test.js','lib/**/*'],
+        tasks: ['test']
       }
     }
   });
@@ -51,8 +56,9 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-test');
 
-  grunt.registerTask('test', ['asset_packs', 'mochaTest', 'clean']);
-  grunt.registerTask('default', ['jshint', 'test']);
+  grunt.registerTask('test', ['clean', 'jshint', 'mochaTest']);
+  grunt.registerTask('default', ['asset_packs']);
 };
