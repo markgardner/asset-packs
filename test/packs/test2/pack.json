@@ -2,7 +2,7 @@
 	"js": [
 		"app.js"
 	],
-	"template": [
+	"html": [
 		"views/test.html"
 	],
 	"css": [
