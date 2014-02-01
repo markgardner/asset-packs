@@ -1,5 +1,6 @@
 {
 	"framework": "angular",
+	"appName": "test",
 	"js": [
 		"app.js"
 	],
