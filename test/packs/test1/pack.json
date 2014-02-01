@@ -1,6 +1,7 @@
 {
 	"framework": "angular",
 	"appName": "test",
+	"appDeps": ["ngSanitize"],
 	"js": [
 		"app.js"
 	],
