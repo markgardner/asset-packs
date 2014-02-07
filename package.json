@@ -45,7 +45,6 @@
   "dependencies": {
     "async": "~0.2.9",
     "node-fs": "~0.1.7",
-    "glob": "~3.2.8",
-    "watchr": "~2.4.11"
+    "glob": "~3.2.8"
   }
 }
