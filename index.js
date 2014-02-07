@@ -1,0 +1,1 @@
+exports.middleware = require('./middleware/asset_middleware');

@@ -23,20 +23,6 @@ module.exports = function(grunt) {
       }
     },
 
-    clean: {
-      asset_packs: ['.build']
-    },
-
-    // Configuration to be run (and then tested).
-    asset_packs: {
-      compile: {
-        src: ['test/packs/**/pack.json'],
-        options: {
-          dest: '.build'
-        }
-      }
-    },
-
     // Unit tests.
     mochaTest: {
       test: {
@@ -55,10 +41,9 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks');
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-test');
 
-  grunt.registerTask('test', ['clean', 'jshint', 'mochaTest']);
-  grunt.registerTask('default', ['asset_packs']);
+  grunt.registerTask('test', ['jshint', 'mochaTest']);
+  grunt.registerTask('default', ['test']);
 };
