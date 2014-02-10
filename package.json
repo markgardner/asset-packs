@@ -30,8 +30,11 @@
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-watch": "~0.5.3",
     "grunt-mocha-test": "~0.8.1",
-    "sinon": "~1.7.3"
+    "sinon": "~1.8.1",
+    "rewire": "~2.0.0",
+    "chai": "~1.9.0"
   },
   "peerDependencies": {
     "grunt": "~0.4.2"
