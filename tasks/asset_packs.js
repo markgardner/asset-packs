@@ -22,7 +22,7 @@ module.exports = function(grunt) {
         async.each(packs, function(pack, done) {
             pack.getAllContent(function(content) {
                 for(var p in content) {
-                    var filename = path.resolve(outputDir, pack.compiler.rootDir + '.' + p);
+                    var filename = path.resolve(outputDir, pack.compiler.base + '.' + p);
                     var dirname = path.dirname(filename);
 
                     if(!fs.existsSync(dirname)) {
