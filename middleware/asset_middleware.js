@@ -32,12 +32,16 @@ module.exports = function(basePath, packFiles) {
             file = path.basename(match[1], ext);
             asset = assets[path.join(dir, file)];
 
-            asset.getContent(ext.slice(1), function(content) {
-                res.writeHead(200, {
-                    'Content-Type': content.mime
+            if(asset) {
+                asset.getContent(ext.slice(1), function(content) {
+                    res.writeHead(200, {
+                        'Content-Type': content.mime
+                    });
+                    res.end(content.content);
                 });
-                res.end(content.content);
-            });
+            } else {
+                next();
+            }
         } else {
             // Setup helper method to resolve dev/prod versions of packs.
             res.locals.pack = function(packer) {
