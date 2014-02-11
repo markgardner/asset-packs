@@ -29,8 +29,8 @@ function createHelper(handler) {
     };
 }
 
-function configureProd(urlPrefix, basePath) {
-    var manifest = require(path.join(basePath, 'manifest.json'));
+function configureProd(opts) {
+    var manifest = require(path.join(opts.base, 'manifest.json'));
 
     return function(req, res, next) {
         // Setup helper method for prod packs.
@@ -47,7 +47,7 @@ function configureProd(urlPrefix, basePath) {
                 }
             }
 
-            file = urlPrefix + manifest[file][type];
+            file = opts.prefix + manifest[file][type];
 
             // Dust will give use a chunk to write others will just work with returned value.
             if(chunk) {
@@ -61,22 +61,25 @@ function configureProd(urlPrefix, basePath) {
     };
 }
 
-function configureDev(urlPrefix, basePath, packFiles) {
+function configureDev(opts) {
     var assets = {},
-        regex = new RegExp('^' + urlPrefix+ '(.+)');
+        regex = new RegExp('^' + opts.prefix+ '(.+)');
 
-    async.concat(packFiles, function(pattern, cb) {
-        glob(path.join(basePath, pattern), cb);
+    async.concat(opts.files, function(pattern, cb) {
+        glob(path.join(opts.base, pattern), cb);
     }, function(err, packFiles) {
         var packName;
 
         for(var i = 0; i < packFiles.length; i++) {
-            packName = path.relative(basePath, packFiles[i]);
+            packName = path.relative(opts.base, packFiles[i]);
             packName = packName.slice(0, packName.length - 10);
 
             assets[packName] = new AssetPacker({
                 pack: packFiles[i],
-                base: path.join(basePath, packName)
+                base: path.join(opts.base, packName),
+                sync: opts.sync,
+                autoWatch: opts.autoWatch,
+                skipCache: opts.skipCache
             });
         }
     });
@@ -115,7 +118,7 @@ function configureDev(urlPrefix, basePath, packFiles) {
                     }
                 }
 
-                file = urlPrefix + file + '.' + type;
+                file = opts.prefix + file + '.' + type;
 
                 // Dust will give use a chunk to write others will just work with returned value.
                 if(chunk) {
@@ -130,10 +133,10 @@ function configureDev(urlPrefix, basePath, packFiles) {
     };
 }
 
-module.exports = function(urlPrefix, basePath, packFiles) {
+module.exports = function(opts) {
     if(process.env.NODE_ENV === 'production') {
-        return configureProd(urlPrefix, basePath);
+        return configureProd(opts);
     } else {
-        return configureDev(urlPrefix, basePath, packFiles);
+        return configureDev(opts);
     }
 };
