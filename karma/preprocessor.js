@@ -23,6 +23,4 @@ function createPreprocessor(basePath) {
 
 createPreprocessor.$inject = ['config.basePath'];
 
-module.exports = {
-	'preprocessor:packs': ['factory', createPreprocessor]
-};
+module.exports = createPreprocessor;
