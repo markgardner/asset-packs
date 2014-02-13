@@ -65,7 +65,7 @@ function configureDev(opts) {
     var assets = {},
         regex = new RegExp('^' + opts.prefix+ '(.+)');
 
-    async.concat(opts.files, function(pattern, cb) {
+    async.concat(opts.files || [], function(pattern, cb) {
         glob(path.join(opts.base, pattern), cb);
     }, function(err, packFiles) {
         var packName;
