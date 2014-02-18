@@ -12,6 +12,7 @@ function createHelper(handler) {
         if(typeof(chunk) === 'string') {
             file = chunk;
             type = context;
+            chunk = null;
         } else {
             file = params.file;
             type = params.type;
