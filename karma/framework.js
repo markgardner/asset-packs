@@ -38,7 +38,9 @@ function createFramework(config) {
     // Can't use emitter.on('exit'). We will get the event raised before coverage is done.
     process.on('exit', function() {
         for(var i = 0; i < files.length; i++) {
-            fs.unlinkSync(files[i]);
+            if(fs.existsSync(files[i])) {
+                fs.unlinkSync(files[i]);
+            }
         }
     });
 }
