@@ -135,7 +135,6 @@ function configureDev(opts) {
 }
 
 module.exports = function(opts) {
-    console.log(opts);
     if(opts.isProduction) {
         return configureProd(opts);
     } else {
