@@ -135,7 +135,8 @@ function configureDev(opts) {
 }
 
 module.exports = function(opts) {
-    if(process.env.NODE_ENV === 'production') {
+    console.log(opts);
+    if(opts.isProduction) {
         return configureProd(opts);
     } else {
         return configureDev(opts);
