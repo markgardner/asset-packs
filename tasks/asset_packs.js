@@ -44,7 +44,7 @@ module.exports = function(grunt) {
                     fs.writeFile(filePath, fileContent);
                     
                     if(!manifest[pack.compiler.base]) {
-                        manifest[pack.compiler.base] = {}
+                        manifest[pack.compiler.base] = {};
                     }
 
                     manifest[pack.compiler.base][p] = filename;
