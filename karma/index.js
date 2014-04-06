@@ -1,4 +1,4 @@
 module.exports = {
     'preprocessor:packs': ['factory', require('./preprocessor')],
-    'framework:packs': ['factory', require('./framework')]
+    'reporter:packs-coverage': ['type', require('./coverage-reporter')]
 };

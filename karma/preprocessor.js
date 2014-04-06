@@ -4,7 +4,9 @@ var path = require('path'),
 
 var assets = {};
 
-function createPreprocessor(basePath, singleRun) {
+function createPreprocessor(basePath, singleRun, reporters) {
+	var useCoverage = reporters.indexOf('packs-coverage') !== -1;
+
 	return function(content, file, done) {
 		var packName = path.relative(basePath, file.path);
 		packName = path.dirname(packName);
@@ -13,7 +15,8 @@ function createPreprocessor(basePath, singleRun) {
 			assets[packName] = new AssetPacker({
 				pack: file.path,
 				base: path.dirname(file.path),
-				autoWatch: !singleRun
+				autoWatch: !singleRun,
+				useCoverage: useCoverage
 			});
 
 			assets[packName].on('fileChange', function() {
@@ -28,6 +31,6 @@ function createPreprocessor(basePath, singleRun) {
 	};
 }
 
-createPreprocessor.$inject = ['config.basePath', 'config.singleRun'];
+createPreprocessor.$inject = ['config.basePath', 'config.singleRun', 'config.reporters'];
 
 module.exports = createPreprocessor;
