@@ -1,7 +1,7 @@
 {
   "name": "asset-packs",
   "description": "Grunt Plugin/Middleware for packing development source into production assets",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/markgardner/asset-packs",
   "main": "index.js",
   "author": {
@@ -33,7 +33,6 @@
     "grunt-contrib-jshint": "^0.8.0",
     "grunt-contrib-watch": "^0.5.3",
     "grunt-mocha-test": "^0.8.2",
-    "istanbul": "^0.2.7",
     "rewire": "^2.0.0",
     "sinon": "^1.8.2"
   },
@@ -45,6 +44,7 @@
   "dependencies": {
     "async": "^0.2.10",
     "node-fs": "^0.1.7",
-    "glob": "^3.2.9"
+    "glob": "^3.2.9",
+    "istanbul": "^0.2.7"
   }
 }
