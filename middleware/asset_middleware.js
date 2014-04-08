@@ -97,7 +97,12 @@ function configureDev(opts) {
             dir = path.dirname(match[1]);
             ext = path.extname(match[1]);
             file = path.basename(match[1], ext);
-            asset = assets[path.join(dir, file)];
+            file = path.join(dir, file);
+
+            // Fix windows path
+            file = file.replace(/\\/g, '/');
+
+            asset = assets[file];
 
             if(asset) {
                 asset.getContent(ext.slice(1), function(content) {
@@ -117,6 +122,7 @@ function configureDev(opts) {
                 if(!assets[file]) {
                     err = new Error('Pack was not found \'' + file + '\'');
 
+                    // Look for chunk to support dust templates
                     if(chunk) {
                         return chunk.setError(err);
                     } else {
