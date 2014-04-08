@@ -73,7 +73,12 @@ function configureDev(opts) {
 
         for(var i = 0; i < packFiles.length; i++) {
             packName = path.relative(opts.base, packFiles[i]);
-            packName = packName.slice(0, packName.length - 10);
+
+            // Remove pack.json file.
+            packName = path.dirname(packName);
+
+            // Clean windows path
+            packName = packName.replace(/\\/g, '/');
 
             assets[packName] = new AssetPacker({
                 pack: packFiles[i],
@@ -108,9 +113,6 @@ function configureDev(opts) {
             // Setup helper method for dev packs.
             res.locals.pack = createHelper(function(file, type, chunk) {
                 var err;
-                
-		// Normalize to support windows.
-		file = path.normalize(file);
 
                 if(!assets[file]) {
                     err = new Error('Pack was not found \'' + file + '\'');
