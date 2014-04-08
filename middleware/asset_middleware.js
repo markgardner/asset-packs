@@ -108,6 +108,9 @@ function configureDev(opts) {
             // Setup helper method for dev packs.
             res.locals.pack = createHelper(function(file, type, chunk) {
                 var err;
+                
+		// Normalize to support windows.
+		file = path.normalize(file);
 
                 if(!assets[file]) {
                     err = new Error('Pack was not found \'' + file + '\'');
