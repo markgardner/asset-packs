@@ -3,11 +3,16 @@ var path = require('path'),
     fs = require('fs'),
     istanbul = require('istanbul');
 
-function PacksCoverageReporter(logger, helper, basePath) {
+function PacksCoverageReporter(logger, helper, basePath, reportConf) {
     var log = logger.create('packs-coverage');
     var collector = new istanbul.Collector();
     var finishWriting = function() {};
-    var pendingFiles = 0;
+    var writingReport = false;
+
+    reportConf = helper.merge({}, reportConf, {
+        reporters: ['html'],
+        dir: 'coverage'
+    });
 
     this.onBrowserComplete = function(browser, result) {
         collector.add(result.coverage);
@@ -19,32 +24,33 @@ function PacksCoverageReporter(logger, helper, basePath) {
         browsers.forEach(function(browser) {
             var reportDir = path.resolve(reportBaseDir, browser.name);
 
-            pendingFiles++;
+            writingReport = true;
 
             helper.mkdirIfNotExists(reportDir, function() {
-                var reporter;
 
                 log.debug('Writing coverage to %s', reportDir);
 
-                try {
-                    reporter = istanbul.Report.create('html', {
-                        dir: reportDir
-                    });
+                reportConf.reporters.forEach(function(type) {
+                    try {
+                        var reporter = istanbul.Report.create(type, {
+                            dir: reportDir
+                        });
 
-                    reporter.writeReport(collector, true);
-                } catch (e) {
-                    log.error(e);
-                }
+                        reporter.writeReport(collector, true);
+                    } catch (e) {
+                        log.error('Error for type', type, e);
+                    }
+                });
 
-                if(--pendingFiles === 0) {
-                    finishWriting();
-                }
+                writingReport = false;
+
+                finishWriting();
             });
         });
     };
 
     this.onExit = function(done) {
-        if(pendingFiles > 0) {
+        if(writingReport) {
             finishWriting = done;
         } else {
             done();
@@ -52,6 +58,6 @@ function PacksCoverageReporter(logger, helper, basePath) {
     };
 }
 
-PacksCoverageReporter.$inject = ['logger', 'helper', 'config.basePath'];
+PacksCoverageReporter.$inject = ['logger', 'helper', 'config.basePath', 'config.packsCoverage'];
 
 module.exports = PacksCoverageReporter;
