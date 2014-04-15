@@ -43,8 +43,9 @@
   ],
   "dependencies": {
     "async": "^0.2.10",
-    "node-fs": "^0.1.7",
     "glob": "^3.2.9",
-    "istanbul": "^0.2.7"
+    "istanbul": "^0.2.7",
+    "node-fs": "^0.1.7",
+    "uglify-js": "^2.4.13"
   }
 }

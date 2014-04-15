@@ -4,7 +4,8 @@ var path = require('path'),
     cypto = require('crypto'),
     async = require('async'),
     fs = require('node-fs'),
-    AssetPacker = require('../lib/AssetPacker');
+    AssetPacker = require('../lib/AssetPacker'),
+    UglifyJS = require("uglify-js");
 
 function generateSha(content) {
     var shasum = cypto.createHash('sha1');
@@ -12,6 +13,61 @@ function generateSha(content) {
     shasum.update(content);
 
     return shasum.digest('hex');
+}
+
+var fileHandlers = {
+    js: function(contents, pack, outputDir) {
+        var fileSha = generateSha(contents.content),
+            filename = pack.compiler.name + '-' + fileSha,
+            metaFiles = contents.meta.files,
+            baseName = pack.compiler.name,
+            compressTransform = UglifyJS.Compressor({ warnings: false }),
+            sourceMap = UglifyJS.SourceMap({
+                file: filename + '.js.map'
+            }),
+            toplevel;
+
+        function parseAST(raw, filename) {
+            toplevel = UglifyJS.parse(raw, {
+                filename: filename,
+                toplevel: toplevel
+            });
+
+            // Embed content in source map
+            sourceMap.get().setSourceContent(filename, raw);
+        }
+
+        // Generate AST
+        parseAST(contents.meta.header, baseName + '/_header.js');
+        for(var i = 0, list = Object.keys(metaFiles); i < list.length; i++) {
+            parseAST(metaFiles[list[i]], baseName + '/' + list[i]);
+        }
+        parseAST(contents.meta.footer, baseName + '/_footer.js');
+
+        // Wrap AST in anonymous function
+        if(contents.meta.params.length) {
+            toplevel = toplevel.wrap_enclose(contents.meta.params);
+        }
+
+        // Compress AST.
+        toplevel.figure_out_scope();
+        toplevel = toplevel.transform(compressTransform);
+
+        // Mangle vars in AST
+        toplevel.figure_out_scope();
+        toplevel.compute_char_frequency();
+        toplevel.mangle_names();
+
+        var compressContent = toplevel.print_to_string({
+            source_map: sourceMap
+        });
+
+        fs.writeFile(path.resolve(outputDir, filename + '.js'), contents.content);
+        fs.writeFile(path.resolve(outputDir, filename + '.min.js'), compressContent + '\n//# sourceMappingURL=' + filename + '.js.map');
+        fs.writeFile(path.resolve(outputDir, filename + '.js.map'), sourceMap);
+
+        return filename + '.min.js';
+    }
 }
 
 module.exports = function(grunt) {
@@ -35,13 +91,10 @@ module.exports = function(grunt) {
 
         async.each(packs, function(pack, done) {
             pack.getAllContent(function(content) {
-                for(var p in content) {
-                    var fileContent = content[p].content;
-                    var fileSha = generateSha(fileContent);
-                    var filename = pack.compiler.name + '-' + fileSha + '.' + p;
-                    var filePath = path.resolve(outputDir, filename);
+                var filename, p;
 
-                    fs.writeFile(filePath, fileContent);
+                for(p in content) {
+                    filename = fileHandlers[p](content[p], pack, outputDir);
                     
                     if(!manifest[pack.compiler.base]) {
                         manifest[pack.compiler.base] = {};
