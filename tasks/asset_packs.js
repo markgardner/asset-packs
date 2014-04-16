@@ -21,6 +21,7 @@ var fileHandlers = {
             filename = pack.compiler.name + '-' + fileSha,
             metaFiles = contents.meta.files,
             baseName = pack.compiler.name,
+            buildOpts = pack.pack.build || {},
             compressTransform = UglifyJS.Compressor({ warnings: false }),
             sourceMap = UglifyJS.SourceMap({
                 file: filename + '.js.map'
@@ -50,13 +51,17 @@ var fileHandlers = {
         }
 
         // Compress AST.
-        toplevel.figure_out_scope();
-        toplevel = toplevel.transform(compressTransform);
+        if(!buildOpts.skipCompression) {
+            toplevel.figure_out_scope();
+            toplevel = toplevel.transform(compressTransform);
+        }
 
         // Mangle vars in AST
-        toplevel.figure_out_scope();
-        toplevel.compute_char_frequency();
-        toplevel.mangle_names();
+        if(!buildOpts.skipMangle) {
+            toplevel.figure_out_scope();
+            toplevel.compute_char_frequency();
+            toplevel.mangle_names();
+        }
 
         var compressContent = toplevel.print_to_string({
             source_map: sourceMap
