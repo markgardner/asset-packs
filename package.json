@@ -1,7 +1,7 @@
 {
   "name": "asset-packs",
   "description": "Grunt Plugin/Middleware for packing development source into production assets",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "homepage": "https://github.com/markgardner/asset-packs",
   "main": "index.js",
   "author": {

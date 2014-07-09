@@ -88,7 +88,7 @@ module.exports = function(grunt) {
 
         for(var list = this.filesSrc, i = 0; i < list.length; i++) {
             packs.push(new AssetPacker({
-                pack: path.resolve(list[i]),
+                pack: list[i],
                 base: path.dirname(list[i]),
                 autoWatch: false
             }));
