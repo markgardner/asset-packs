@@ -8,12 +8,12 @@ function createPreprocessor(basePath, singleRun, reporters) {
 	var useCoverage = reporters.indexOf('packs-coverage') !== -1;
 
 	return function(content, file, done) {
-		var packName = path.relative(basePath, file.path);
-		packName = path.dirname(packName);
+		var packPath = path.relative(basePath, file.path),
+			packName = path.dirname(packPath);
 
 		if(!assets[packName]) {
 			assets[packName] = new AssetPacker({
-				pack: file.path,
+				pack: packPath,
 				base: path.dirname(file.path),
 				autoWatch: !singleRun,
 				useCoverage: useCoverage
