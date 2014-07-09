@@ -69,19 +69,20 @@ function configureDev(opts) {
     async.concat(opts.files || [], function(pattern, cb) {
         glob(path.join(opts.base, pattern), cb);
     }, function(err, packFiles) {
-        var packName;
+        var packName,
+            packPath;
 
         for(var i = 0; i < packFiles.length; i++) {
-            packName = path.relative(opts.base, packFiles[i]);
+            packPath = path.relative(opts.base, packFiles[i]);
 
             // Remove pack.json file.
-            packName = path.dirname(packName);
+            packName = path.dirname(packPath);
 
             // Clean windows path
             packName = packName.replace(/\\/g, '/');
 
             assets[packName] = new AssetPacker({
-                pack: packFiles[i],
+                pack: packPath,
                 base: path.join(opts.base, packName),
                 sync: opts.sync,
                 autoWatch: opts.autoWatch,
