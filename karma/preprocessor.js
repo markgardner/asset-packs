@@ -20,7 +20,7 @@ function createPreprocessor(basePath, singleRun, reporters) {
 			});
 
 			assets[packName].on('fileChange', function() {
-				var now = Date.now();
+				var now = new Date();
 				fs.utimesSync(file.path, now, now);
 			});
 		}
