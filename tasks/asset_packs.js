@@ -22,39 +22,12 @@ var fileHandlers = {
             metaFiles = contents.meta.files,
             baseName = pack.compiler.name,
             buildOpts = pack.pack.build || {},
-            compressTransform = UglifyJS.Compressor({ warnings: false }),
             sourceMap = UglifyJS.SourceMap({
                 file: filename + '.js.map'
             }),
-            toplevel;
-
-        function parseAST(raw, filename) {
-            toplevel = UglifyJS.parse(raw, {
-                filename: filename,
-                toplevel: toplevel
+            toplevel = UglifyJS.parse(contents.content, {
+                filename: filename + '.js'
             });
-
-            // Embed content in source map
-            sourceMap.get().setSourceContent(filename, raw);
-        }
-
-        // Generate AST
-        parseAST(contents.meta.header, baseName + '/_header.js');
-        for(var i = 0, list = Object.keys(metaFiles); i < list.length; i++) {
-            parseAST(metaFiles[list[i]], baseName + '/' + list[i]);
-        }
-        parseAST(contents.meta.footer, baseName + '/_footer.js');
-
-        // Wrap AST in anonymous function
-        if(contents.meta.params.length) {
-            toplevel = toplevel.wrap_enclose(contents.meta.params);
-        }
-
-        // Compress AST.
-        if(!buildOpts.skipCompression) {
-            toplevel.figure_out_scope();
-            toplevel = toplevel.transform(compressTransform);
-        }
 
         // Mangle vars in AST
         if(!buildOpts.skipMangle) {
