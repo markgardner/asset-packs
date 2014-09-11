@@ -19,34 +19,31 @@ var fileHandlers = {
     js: function(contents, pack, outputDir) {
         var fileSha = generateSha(contents.content),
             filename = pack.compiler.name + '-' + fileSha,
-            metaFiles = contents.meta.files,
-            baseName = pack.compiler.name,
-            buildOpts = pack.pack.build || {},
             sourceMap = UglifyJS.SourceMap({
                 file: filename + '.js.map'
             }),
+            compressor = UglifyJS.Compressor({ 
+                warnings: false
+            }),
             toplevel = UglifyJS.parse(contents.content, {
-                filename: filename + '.js'
+                filename: filename + '.js',
+                toplevel: null
+            }),
+            stream = UglifyJS.OutputStream({
+                source_map: sourceMap
             });
 
-        // Mangle vars in AST
-        if(!buildOpts.skipMangle) {
-            toplevel.figure_out_scope();
-            toplevel.compute_char_frequency();
-            toplevel.mangle_names();
-        }
-
-        var compressContent = toplevel.print_to_string({
-            source_map: sourceMap
-        });
+        toplevel.figure_out_scope();
+        toplevel = toplevel.transform(compressor);
+        toplevel.print(stream);
 
         fs.writeFile(path.resolve(outputDir, filename + '.js'), contents.content);
-        fs.writeFile(path.resolve(outputDir, filename + '.min.js'), compressContent + '\n//# sourceMappingURL=' + filename + '.js.map');
-        fs.writeFile(path.resolve(outputDir, filename + '.js.map'), sourceMap);
+        fs.writeFile(path.resolve(outputDir, filename + '.min.js'), stream + '\n//@ sourceMappingURL=' + filename + '.js.map');
+        fs.writeFile(path.resolve(outputDir, filename + '.js.map'), sourceMap + '');
 
         return filename + '.min.js';
     }
-}
+};
 
 module.exports = function(grunt) {
     grunt.registerMultiTask('packs', 'Grunt Plugin for writing packs to disk', function() {
