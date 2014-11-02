@@ -67,8 +67,8 @@ describe('watcher', function() {
         expect(fsMock.statSync.callCount).to.equal(2);
         expect(addWatchSpy.callCount).to.equal(2);
 
-        expect(addWatchSpy.calledWithExactly('/root', watchHandleStub)).to.be.true;
-        expect(addWatchSpy.calledWithExactly('/root/is-directory', watchHandleStub)).to.be.true;
+        expect(addWatchSpy.calledWith('/root', watchHandleStub)).to.be.true;
+        expect(addWatchSpy.calledWith('/root/is-directory', watchHandleStub)).to.be.true;
     });
 
     it('should check cache for duplicate watches', function() {
@@ -122,33 +122,37 @@ describe('watcher', function() {
         expect(watchHandleStub.callCount).to.equal(0);
     });
 
-    it('should handle changes', function() {
+    it('should handle changes', function(done) {
         watcher([
             '/root/is-file.txt',
             '/root/is-directory'
-        ], watchHandleStub);
+        ], function(change, path) {
+            done();
+
+            expect(change).to.equal('change');
+            expect(path).to.equal('/root/test.txt');
+        }, 1);
 
         fsMock.watch.args[0][2]('change', 'test.txt');
-
-        expect(watchHandleStub.calledOnce).to.be.true;
-        expect(watchHandleStub.calledWithExactly('change', '/root/test.txt')).to.be.true;
     });
 
-    it('should handle creates', function() {
+    it('should handle creates', function(done) {
         var addWatchSpy = sinon.spy();
 
         watcher([
             '/root/is-file.txt',
             '/root/is-directory'
-        ], watchHandleStub);
+        ], function(change, path) {
+            expect(change).to.equal('create');
+            expect(path).to.equal('/root/is-directory');
+            expect(addWatchSpy.calledOnce).to.be.true;
+            expect(addWatchSpy.calledWith('/root/is-directory', sinon.match.func)).to.be.true;
+
+            done();
+        }, 1);
         watcher.__set__('addWatch', addWatchSpy);
 
         fsMock.watch.args[0][2]('rename', 'is-directory');
-
-        expect(watchHandleStub.calledOnce).to.be.true;
-        expect(watchHandleStub.calledWithExactly('create', '/root/is-directory')).to.be.true;
-        expect(addWatchSpy.calledOnce).to.be.true;
-        expect(addWatchSpy.calledWithExactly('/root/is-directory', sinon.match.func)).to.be.true;
     });
 
     it('should handle deletes', function() {
@@ -157,17 +161,17 @@ describe('watcher', function() {
         watcher([
             '/root/is-file.txt',
             '/root/is-directory'
-        ], watchHandleStub);
+        ], function(change, path) {
+            expect(_watches['/root/is-directory']).to.be.an('undefined');
+            expect(watchObj.close.calledOnce).to.be.true;
+            expect(change).to.equal('delete');
+            expect(path).to.equal('/root/is-directory');
+        });
 
         fsMock.existsSync = sinon.stub().returns(false);
         watchObj = _watches['/root/is-directory'];
 
         fsMock.watch.args[0][2]('rename', 'is-directory');
-
-        expect(_watches['/root/is-directory']).to.be.an('undefined');
-        expect(watchObj.close.calledOnce).to.be.true;
-        expect(watchHandleStub.calledOnce).to.be.true;
-        expect(watchHandleStub.calledWithExactly('delete', '/root/is-directory')).to.be.true;
     });
 
     it('should close all and remove from cache', function() {
