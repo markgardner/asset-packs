@@ -35,6 +35,16 @@ var fileHandlers = {
 
         toplevel.figure_out_scope();
         toplevel = toplevel.transform(compressor);
+
+        if (pack.pack.mangleNames) {
+            toplevel.figure_out_scope();
+            toplevel.compute_char_frequency();
+            toplevel.mangle_names({
+                toplevel: true,
+                sort: true
+            });
+        }
+
         toplevel.print(stream);
 
         fs.writeFile(path.resolve(outputDir, filename + '.js'), contents.content);
