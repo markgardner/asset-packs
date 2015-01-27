@@ -19,7 +19,7 @@ function PacksCoverageReporter(logger, helper, basePath, reportConf) {
     };
 
     this.onRunComplete = function(browsers) {
-        var reportBaseDir = path.resolve(basePath, 'coverage');
+        var reportBaseDir = path.resolve(basePath, reportConf.dir);
 
         browsers.forEach(function(browser) {
             var reportDir = path.resolve(reportBaseDir, browser.name);
