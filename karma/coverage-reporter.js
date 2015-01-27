@@ -9,10 +9,10 @@ function PacksCoverageReporter(logger, helper, basePath, reportConf) {
     var finishWriting = function() {};
     var writingReport = false;
 
-    reportConf = helper.merge({}, reportConf, {
+    reportConf = helper.merge({}, {
         reporters: ['html'],
         dir: 'coverage'
-    });
+    }, reportConf);
 
     this.onBrowserComplete = function(browser, result) {
         collector.add(result.coverage);
