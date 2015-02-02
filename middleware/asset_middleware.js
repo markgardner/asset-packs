@@ -31,7 +31,7 @@ function createHelper(handler) {
 }
 
 function configureProd(opts) {
-    var manifest = require(path.join(opts.base, 'manifest.json'));
+    var manifest = require(path.join(process.cwd(), opts.base, 'manifest.json'));
 
     return function(req, res, next) {
         // Setup helper method for prod packs.
