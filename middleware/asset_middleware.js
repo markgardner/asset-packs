@@ -1,7 +1,8 @@
 'use strict';
 var glob = require('glob'),
+    fs = require('fs'),
     path = require('path'),
-	async = require('async'),
+    async = require('async'),
     AssetPacker = require('../lib/AssetPacker');
 
 function createHelper(handler) {
@@ -31,7 +32,7 @@ function createHelper(handler) {
 }
 
 function configureProd(opts) {
-    var manifest = require(path.join(process.cwd(), opts.base, 'manifest.json'));
+    var manifest = require(path.join(opts.base, 'manifest.json'));
 
     return function(req, res, next) {
         // Setup helper method for prod packs.
@@ -147,6 +148,10 @@ function configureDev(opts) {
 }
 
 module.exports = function(opts) {
+    if(!fs.existsSync(opts.base)) {
+        opts.base = path.join(process.cwd(), opts.base);
+    }
+
     if(opts.isProduction) {
         return configureProd(opts);
     } else {
