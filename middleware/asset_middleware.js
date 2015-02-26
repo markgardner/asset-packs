@@ -148,9 +148,7 @@ function configureDev(opts) {
 }
 
 module.exports = function(opts) {
-    if(!fs.existsSync(opts.base)) {
-        opts.base = path.join(process.cwd(), opts.base);
-    }
+    opts.base = path.resolve(opts.base);
 
     if(opts.isProduction) {
         return configureProd(opts);
