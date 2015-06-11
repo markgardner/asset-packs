@@ -15,7 +15,17 @@ function createHelper(handler) {
             type = context;
             chunk = null;
         } else {
-            file = params.file;
+            if(typeof(params.file) === 'function') {
+                file = '';
+                chunk.tap(function(data) {
+                    file += data;
+
+                    return '';
+                }).render(params.file, context).untap();
+            } else {
+                file = params.file;
+            }
+            
             type = params.type;
         }
 
