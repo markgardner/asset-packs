@@ -47,9 +47,9 @@ var fileHandlers = {
 
         toplevel.print(stream);
 
-        fs.writeFile(path.resolve(outputDir, filename + '.js'), contents.content);
-        fs.writeFile(path.resolve(outputDir, filename + '.min.js'), stream + '\n//@ sourceMappingURL=' + filename + '.js.map');
-        fs.writeFile(path.resolve(outputDir, filename + '.js.map'), sourceMap + '');
+        fs.writeFile(path.resolve(outputDir, filename + '.js'), contents.content, function() {});
+        fs.writeFile(path.resolve(outputDir, filename + '.min.js'), stream + '\n//@ sourceMappingURL=' + filename + '.js.map', function() {});
+        fs.writeFile(path.resolve(outputDir, filename + '.js.map'), sourceMap + '', function() {});
 
         return filename + '.min.js';
     }
